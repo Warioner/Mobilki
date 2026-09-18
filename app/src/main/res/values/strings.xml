@@ -11,4 +11,10 @@
     <string name="settings">Настройки</string>
     <string name="autors">Авторы</string>
     <string name="rules">Правила</string>
+
+    <string name="rules_text"><![CDATA[
+        <h2>Правила игры</h2>
+        <p>Текст правил будет добавлен позже. А может и нет:3.
+        Давайте, не злитесь. Добра и позитива!</p>
+    ]]></string>
 </resources>
