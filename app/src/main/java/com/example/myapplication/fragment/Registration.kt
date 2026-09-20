@@ -31,7 +31,7 @@ class Registration : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val baton = view.findViewById<Button>(R.id.baton)
+        val baton = view.findViewById<Button>(R.id.buttonRegistration)
         baton.setOnClickListener {
             pressButton(view)
         }
@@ -50,28 +50,51 @@ class Registration : Fragment() {
         }
     }
 
-    private fun createUser(view: View): user {
-        val nameEt = view.findViewById<EditText>(R.id.name)
-        val genderRg = view.findViewById<RadioGroup>(R.id.myRadioGroup)
-        val courseSp = view.findViewById<Spinner>(R.id.course)
-        val seekBarSb = view.findViewById<SeekBar>(R.id.seekBar)
+    private fun createUser(view: View): user? {
+        var flag = false
+        val nameEt = view.findViewById<EditText>(R.id.InputNickname)
+        val genderRg = view.findViewById<RadioGroup>(R.id.inputGender)
+        val courseSp = view.findViewById<Spinner>(R.id.inputCourse)
+        val seekBarSb = view.findViewById<SeekBar>(R.id.inputDifficulte)
+
+        val regex = Regex("^[a-zA-Zа-яА-ЯеЁ]+$")
+        if (!regex.matches(nameEt.text.toString())) {
+            nameEt.error = "Только буквы, без пробелов и цифр!"
+            flag = true
+        }
 
         val genderText = when (genderRg.checkedRadioButtonId) {
-            R.id.radioButton1 -> "Female"
-            R.id.radioButton2 -> "Male"
-            R.id.radioButton3 -> "Another"
+            R.id.radioFemale -> "Female"
+            R.id.radioMale -> "Male"
+            R.id.radioOther -> "Another"
             else -> "Не выбран"
         }
+
+//        if(genderText == "Another" || genderText == "Не выбран")
+//        {
+//            val genderText = view.findViewById<TextView>(R.id.gender)
+//            genderText.error = "Нельзя!"
+//            flag = true
+//        }
+
+        if(flag == true)
+        {
+            val Linear = view.findViewById<LinearLayout>(R.id.Linear)
+            Linear.visibility = View.INVISIBLE;
+            return null
+        }
+
             return user(
-            name = nameEt.text.toString(),
-            course = courseSp.selectedItemPosition + 1,
-            difficulty = seekBarSb.progress,
-            birthDay = selectedDay,
-            birthMonth = selectedMonth,
-            birthYear = selectedYear,
-            gender = genderText,
-            zodiac = Whos_That_Zodiak(selectedDay, selectedMonth)
-        )
+                name = nameEt.text.toString(),
+                course = courseSp.selectedItemPosition + 1,
+                difficulty = seekBarSb.progress,
+                birthDay = selectedDay,
+                birthMonth = selectedMonth,
+                birthYear = selectedYear,
+                gender = genderText,
+                zodiac = Whos_That_Zodiak(selectedDay, selectedMonth)
+            )
+
     }
 
     private fun outUser(view: View, user: user) {
@@ -105,10 +128,12 @@ class Registration : Fragment() {
 
     private fun pressButton(view: View) {
         val createdUser = createUser(view)
-        outUser(view, createdUser)
-        val Linear = view.findViewById<LinearLayout>(R.id.Linear)
-        Linear.visibility = View.VISIBLE;
-
+        if(createdUser != null)
+        {
+            outUser(view, createdUser)
+            val Linear = view.findViewById<LinearLayout>(R.id.Linear)
+            Linear.visibility = View.VISIBLE;
+        }
     }
 
     private fun Whos_That_Zodiak(day: Int, month: Int): String {

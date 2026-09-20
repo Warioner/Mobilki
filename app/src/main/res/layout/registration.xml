@@ -14,7 +14,7 @@
 
         <!-- 1. Никнейм -->
         <EditText
-            android:id="@+id/name"
+            android:id="@+id/InputNickname"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:minHeight="48dp"
@@ -24,21 +24,22 @@
 
         <!-- 2. Пол -->
         <TextView
+            android:id="@+id/gender"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
             android:text="Пол"
-            android:textStyle="bold"
-            android:layout_marginBottom="4dp"/>
+            android:textStyle="bold" />
 
         <RadioGroup
-            android:id="@+id/myRadioGroup"
+            android:id="@+id/inputGender"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp">
 
-            <RadioButton android:id="@+id/radioButton1" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Женский" />
-            <RadioButton android:id="@+id/radioButton2" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Мужской" />
-            <RadioButton android:id="@+id/radioButton3" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Другой" />
+            <RadioButton android:id="@+id/radioFemale" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Женский" />
+            <RadioButton android:id="@+id/radioMale" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Мужской" />
+            <RadioButton android:id="@+id/radioOther" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Другой" />
         </RadioGroup>
 
         <!-- 3. Курс -->
@@ -50,7 +51,7 @@
             android:layout_marginBottom="4dp"/>
 
         <Spinner
-            android:id="@+id/course"
+            android:id="@+id/inputCourse"
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:entries="@array/courses"
@@ -65,7 +66,7 @@
             android:layout_marginBottom="4dp"/>
 
         <SeekBar
-            android:id="@+id/seekBar"
+            android:id="@+id/inputDifficulte"
             style="@style/Widget.AppCompat.SeekBar.Discrete"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -89,7 +90,7 @@
 
         <!-- 6. Кнопка -->
         <Button
-            android:id="@+id/baton"
+            android:id="@+id/buttonRegistration"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Регистрация"
