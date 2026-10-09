@@ -11,6 +11,11 @@ import androidx.fragment.app.Fragment
 import com.example.myapplication.R
 import com.example.myapplication.classes.GameBoard
 import com.example.myapplication.classes.SettingsGame
+import com.example.myapplication.classes.PlayerViewModel
+import androidx.fragment.app.activityViewModels
+import androidx.activity.addCallback
+import com.example.myapplication.activity.MainActivity
+import android.content.Intent
 
 class Game : Fragment() {
 
@@ -35,6 +40,7 @@ class Game : Fragment() {
     private lateinit var timeTextView: TextView
     private lateinit var scoreTextView: TextView
     private lateinit var exitButton: Button
+    private val playerVm: PlayerViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -69,26 +75,34 @@ class Game : Fragment() {
         }
 
         gameBoard.onGameFinished = {
-            gameBoard.stop()
-            onExit()
+            if (isAdded) {
+                val user = playerVm.user
+                parentFragmentManager.beginTransaction()
+                    .replace(R.id.main, Results.newInstance(
+                        nickname = user?.name ?: "—",
+                        score = gameBoard.points,
+                        difficulty = (user?.difficulty ?: 0).toString()
+                    ))
+                    .commit()
+            }
         }
 
         exitButton.setOnClickListener {
             gameBoard.stop()
             onExit()
         }
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
+            exitButton.performClick()
+        }
 
         gameBoard.start(settings)
     }
 
     private fun onExit() {
-        // Фрагмент сам не решает, куда вернуться — это решает тот, кто его запустил.
-        // Если есть back stack — пойдём назад. Если нет — закроем Activity.
-        if (parentFragmentManager.backStackEntryCount > 0) {
-            parentFragmentManager.popBackStack()
-        } else {
-            requireActivity().finish()
-        }
+        val intent = Intent(requireContext(), MainActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+        startActivity(intent)
+        requireActivity().finish()
     }
 
     override fun onDestroyView() {

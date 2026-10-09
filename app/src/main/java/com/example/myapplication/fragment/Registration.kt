@@ -16,6 +16,8 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.example.myapplication.R
 import com.example.myapplication.classes.User
+import com.example.myapplication.classes.PlayerViewModel
+import androidx.fragment.app.activityViewModels
 
 class Registration : Fragment() {
 
@@ -23,6 +25,7 @@ class Registration : Fragment() {
     private var selectedMonth = 0
     private var selectedYear = 0
 
+    private val playerVm: PlayerViewModel by activityViewModels()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
@@ -119,13 +122,22 @@ class Registration : Fragment() {
         ivZodiac.setImageResource(imageResId)
     }
 
+//    private fun pressButton(view: View) {
+//        val createdUser = createUser(view)
+//        if(createdUser != null)
+//        {
+//            outUser(view, createdUser)
+//            val Linear = view.findViewById<LinearLayout>(R.id.Linear)
+//            Linear.visibility = View.VISIBLE;
+//        }
+//    }
+
     private fun pressButton(view: View) {
         val createdUser = createUser(view)
-        if(createdUser != null)
-        {
+        if (createdUser != null) {
+            playerVm.user = createdUser          // <-- добавить
             outUser(view, createdUser)
-            val Linear = view.findViewById<LinearLayout>(R.id.Linear)
-            Linear.visibility = View.VISIBLE;
+            view.findViewById<LinearLayout>(R.id.Linear).visibility = View.VISIBLE
         }
     }
 

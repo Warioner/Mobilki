@@ -9,6 +9,8 @@ import android.widget.FrameLayout
 import com.example.myapplication.R
 import com.example.myapplication.classes.Bugs.Bug
 import com.example.myapplication.classes.Bugs.EasyBug
+import com.example.myapplication.classes.Bugs.NormalBug
+import com.example.myapplication.classes.Bugs.HardBug
 import kotlin.random.Random
 
 class GameBoard @JvmOverloads constructor(
@@ -44,12 +46,19 @@ class GameBoard @JvmOverloads constructor(
     )
 
     private val bugConfigs = listOf(
-        BugConfig(sizeDp = 32, weight = 100) { x, y, sizePx ->
+        BugConfig(sizeDp = 64, weight = 100) { x, y, sizePx ->
             EasyBug(context, x, y, sizePx, 15f, false, 10, R.drawable.kata_bug)
         },
-        BugConfig(sizeDp = 64, weight = 500) { x, y, sizePx ->
+        BugConfig(sizeDp = 64, weight = 50) { x, y, sizePx ->
             EasyBug(context, x, y, sizePx, 10f, false, 15, R.drawable.anton)
         },
+        BugConfig(sizeDp = 128, weight = 100) { x, y, sizePx ->
+            NormalBug(context, x, y, sizePx, 20f, false, 30, R.drawable.misha_bug)
+        },
+        BugConfig(sizeDp = 128, weight = 1000) { x, y, sizePx ->
+            HardBug(context, x, y, sizePx, 30f, false, 50, R.drawable.pchela)
+        },
+
     )
 
     private fun randomBugConfig(): BugConfig {
