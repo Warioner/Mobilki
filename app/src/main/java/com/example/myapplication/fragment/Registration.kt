@@ -15,7 +15,7 @@ import android.widget.Spinner
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.example.myapplication.R
-import com.example.myapplication.user
+import com.example.myapplication.classes.User
 
 class Registration : Fragment() {
 
@@ -50,7 +50,7 @@ class Registration : Fragment() {
         }
     }
 
-    private fun createUser(view: View): user? {
+    private fun createUser(view: View): User? {
         var flag = false
         val nameEt = view.findViewById<EditText>(R.id.InputNickname)
         val genderRg = view.findViewById<RadioGroup>(R.id.inputGender)
@@ -70,13 +70,6 @@ class Registration : Fragment() {
             else -> "Не выбран"
         }
 
-//        if(genderText == "Another" || genderText == "Не выбран")
-//        {
-//            val genderText = view.findViewById<TextView>(R.id.gender)
-//            genderText.error = "Нельзя!"
-//            flag = true
-//        }
-
         if(flag == true)
         {
             val Linear = view.findViewById<LinearLayout>(R.id.Linear)
@@ -84,7 +77,7 @@ class Registration : Fragment() {
             return null
         }
 
-            return user(
+            return User(
                 name = nameEt.text.toString(),
                 course = courseSp.selectedItemPosition + 1,
                 difficulty = seekBarSb.progress,
@@ -97,7 +90,7 @@ class Registration : Fragment() {
 
     }
 
-    private fun outUser(view: View, user: user) {
+    private fun outUser(view: View, user: User) {
         val tvResult = view.findViewById<TextView>(R.id.userInfo)
         val ivZodiac = view.findViewById<ImageView>(R.id.image)
 

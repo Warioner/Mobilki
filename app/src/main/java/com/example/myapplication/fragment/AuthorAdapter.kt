@@ -9,6 +9,7 @@ import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.TextView
 import com.example.myapplication.R
+import com.example.myapplication.classes.Author
 
 class AuthorAdapter(
     context: Context,

@@ -7,11 +7,7 @@ import android.widget.ListView
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.myapplication.R
-data class Author (
-    val name: String,
-    val photoResId: Int
-)
-
+import com.example.myapplication.classes.Author
 
 class Authors : Fragment() {
     override fun onCreateView(

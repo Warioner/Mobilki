@@ -1,6 +1,6 @@
-package com.example.myapplication
+package com.example.myapplication.classes
 
-data class user (
+data class User (
     val name: String,
     val course: Int,
     val difficulty: Int,
