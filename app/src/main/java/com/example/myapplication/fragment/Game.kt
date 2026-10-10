@@ -11,36 +11,16 @@ import androidx.fragment.app.Fragment
 import com.example.myapplication.R
 import com.example.myapplication.classes.GameBoard
 import com.example.myapplication.classes.SettingsGame
-import com.example.myapplication.classes.PlayerViewModel
-import androidx.fragment.app.activityViewModels
 import androidx.activity.addCallback
 import com.example.myapplication.activity.MainActivity
 import android.content.Intent
 
 class Game : Fragment() {
-
-    companion object {
-        const val ARG_COUNT_BUG = "COUNT_BUG"
-        const val ARG_SPEED_GAME = "SPEED_GAME"
-        const val ARG_TIME_ROUND = "TIME_ROUND"
-
-        // Для передачи настроек из другого фрагмента (Settings)
-        fun newInstance(countBug: Int, speedGame: Int, timeRound: Int): Game {
-            return Game().apply {
-                arguments = Bundle().apply {
-                    putInt(ARG_COUNT_BUG, countBug)
-                    putInt(ARG_SPEED_GAME, speedGame)
-                    putInt(ARG_TIME_ROUND, timeRound)
-                }
-            }
-        }
-    }
-
+    lateinit var settings: SettingsGame
     private lateinit var gameBoard: GameBoard
     private lateinit var timeTextView: TextView
     private lateinit var scoreTextView: TextView
     private lateinit var exitButton: Button
-    private val playerVm: PlayerViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -56,13 +36,6 @@ class Game : Fragment() {
         scoreTextView = view.findViewById(R.id.scoreTextView)
         exitButton = view.findViewById(R.id.exitButton)
 
-        val args = arguments
-        val settings = SettingsGame(
-            countBug = args?.getInt(ARG_COUNT_BUG, 10) ?: 10,
-            speedGame = args?.getInt(ARG_SPEED_GAME, 1) ?: 1,
-            timeRound = args?.getInt(ARG_TIME_ROUND, 30) ?: 30
-        )
-
         timeTextView.text = "Время: ${settings.timeRound}"
         scoreTextView.text = "Счет: 0"
 
@@ -76,12 +49,11 @@ class Game : Fragment() {
 
         gameBoard.onGameFinished = {
             if (isAdded) {
-                val user = playerVm.user
                 parentFragmentManager.beginTransaction()
-                    .replace(R.id.main, Results.newInstance(
-                        nickname = user?.name ?: "—",
+                    .replace(R.id.fragment_container, Results.newInstance(
+                        nickname = "—",
                         score = gameBoard.points,
-                        difficulty = (user?.difficulty ?: 0).toString()
+                        difficulty = (0).toString()
                     ))
                     .commit()
             }

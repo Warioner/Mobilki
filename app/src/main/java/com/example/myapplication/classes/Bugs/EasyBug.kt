@@ -2,6 +2,8 @@ package com.example.myapplication.classes.Bugs
 
 import android.content.Context
 import androidx.annotation.DrawableRes
+import kotlin.math.cos
+import kotlin.math.sin
 import kotlin.random.Random
 
 class EasyBug(
@@ -18,8 +20,8 @@ class EasyBug(
     init {
         // Задаём случайное начальное направление
         val angle = Random.nextDouble() * 2.0 * Math.PI
-        vx = Math.cos(angle).toFloat()
-        vy = Math.sin(angle).toFloat()
+        vx = cos(angle).toFloat()
+        vy = sin(angle).toFloat()
     }
 
     override fun move(

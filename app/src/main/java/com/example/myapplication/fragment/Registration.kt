@@ -15,9 +15,8 @@ import android.widget.Spinner
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.example.myapplication.R
+import com.example.myapplication.activity.MainActivity
 import com.example.myapplication.classes.User
-import com.example.myapplication.classes.PlayerViewModel
-import androidx.fragment.app.activityViewModels
 
 class Registration : Fragment() {
 
@@ -25,7 +24,6 @@ class Registration : Fragment() {
     private var selectedMonth = 0
     private var selectedYear = 0
 
-    private val playerVm: PlayerViewModel by activityViewModels()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
@@ -65,21 +63,18 @@ class Registration : Fragment() {
             nameEt.error = "Только буквы, без пробелов и цифр!"
             flag = true
         }
-
         val genderText = when (genderRg.checkedRadioButtonId) {
             R.id.radioFemale -> "Female"
             R.id.radioMale -> "Male"
             R.id.radioOther -> "Another"
             else -> "Не выбран"
         }
-
         if(flag == true)
         {
             val Linear = view.findViewById<LinearLayout>(R.id.Linear)
             Linear.visibility = View.INVISIBLE;
             return null
         }
-
             return User(
                 name = nameEt.text.toString(),
                 course = courseSp.selectedItemPosition + 1,
@@ -88,11 +83,9 @@ class Registration : Fragment() {
                 birthMonth = selectedMonth,
                 birthYear = selectedYear,
                 gender = genderText,
-                zodiac = Whos_That_Zodiak(selectedDay, selectedMonth)
+                zodiac = whos_That_Zodiak(selectedDay, selectedMonth)
             )
-
     }
-
     private fun outUser(view: View, user: User) {
         val tvResult = view.findViewById<TextView>(R.id.userInfo)
         val ivZodiac = view.findViewById<ImageView>(R.id.image)
@@ -121,27 +114,20 @@ class Registration : Fragment() {
         }
         ivZodiac.setImageResource(imageResId)
     }
-
-//    private fun pressButton(view: View) {
-//        val createdUser = createUser(view)
-//        if(createdUser != null)
-//        {
-//            outUser(view, createdUser)
-//            val Linear = view.findViewById<LinearLayout>(R.id.Linear)
-//            Linear.visibility = View.VISIBLE;
-//        }
-//    }
-
     private fun pressButton(view: View) {
         val createdUser = createUser(view)
         if (createdUser != null) {
-            playerVm.user = createdUser          // <-- добавить
             outUser(view, createdUser)
+
+            (requireActivity() as MainActivity).user = createdUser
+            (requireActivity() as MainActivity).settings.userDifficulty = createdUser.difficulty
+
             view.findViewById<LinearLayout>(R.id.Linear).visibility = View.VISIBLE
+            (requireActivity() as MainActivity).showMenu()
         }
     }
 
-    private fun Whos_That_Zodiak(day: Int, month: Int): String {
+    private fun whos_That_Zodiak(day: Int, month: Int): String {
         return when (month) {
             1 -> if (day < 20) "Козерог" else "Водолей"
             2 -> if (day < 19) "Водолей" else "Рыбы"

@@ -1,7 +1,8 @@
 package com.example.myapplication.classes
 
 class SettingsGame(
-    val countBug: Int,
-    val speedGame: Int,
-    val timeRound: Int,
+    var countBug: Int,
+    var speedGame: Int,
+    var timeRound: Int,
+    var userDifficulty: Int,
 )
