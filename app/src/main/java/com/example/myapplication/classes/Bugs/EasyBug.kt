@@ -37,7 +37,14 @@ class EasyBug(
         x += vx * effectiveSpeed
         y += vy * effectiveSpeed
 
+
         // Вызываем общую функцию базового класса: отскок + применение позиции
         applyBoundsAndDraw(boardWidth, boardHeight)
+
+        updateRotation()
+    }
+    private fun updateRotation() {
+        val angle = Math.atan2(vy.toDouble(), vx.toDouble())
+        view.rotation = Math.toDegrees(angle).toFloat() + 90f
     }
 }
