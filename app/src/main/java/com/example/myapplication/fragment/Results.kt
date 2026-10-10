@@ -25,11 +25,7 @@ class Results : Fragment(R.layout.results) {
         view.findViewById<TextView>(R.id.tvScore).text = "Счёт: $score"
 
         view.findViewById<Button>(R.id.btnExit).setOnClickListener {
-            // перезапускаем MainActivity: форма регистрации откроется «с нуля»
-            val intent = Intent(requireContext(), MainActivity::class.java)
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
-            startActivity(intent)
-            requireActivity().finish()
+            (requireActivity() as MainActivity).showMenu()
         }
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
             view.findViewById<Button>(R.id.btnExit).performClick()

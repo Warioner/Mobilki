@@ -6,8 +6,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.SeekBar
 import android.widget.TextView
+import android.widget.EditText
+import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
+import com.example.myapplication.activity.MainActivity
 import com.example.myapplication.R
+
+
 
 class Settings : Fragment() {
     override fun onCreateView(
@@ -18,15 +23,57 @@ class Settings : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val main = requireActivity() as MainActivity
         val seekBar = view.findViewById<SeekBar>(R.id.ScrollSpeedGame)
         val textView = view.findViewById<TextView>(R.id.ShowSpeedGame)
+        val countBugs = view.findViewById<EditText>(R.id.EditCountBugs)
+        val bonusHren = view.findViewById<EditText>(R.id.EditTimeToBonus)
+        val timeRound = view.findViewById<EditText>(R.id.EditTimeRound)
+        seekBar.progress = main.settings.speedGame / 10 - 1
+        textView.text = "${main.settings.speedGame}%"
 
         seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 textView.text = "${(progress + 1) * 10}%"
+                main.updateSettingsSpeedGame((progress + 1) * 10)
+
             }
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
             override fun onStopTrackingTouch(seekBar: SeekBar?) {}
         })
+
+        countBugs.setText(main.settings.countBug.toString())
+        bonusHren.setText(main.settings.bonusTime.toString())
+        timeRound.setText(main.settings.timeRound.toString())
+
+        countBugs.doAfterTextChanged { text ->
+            val value = text?.toString()?.toIntOrNull()
+            if (value == null) {
+                countBugs.error = "Параметры не заданы"
+            } else {
+                main.updateSettingsCountBug(value)
+            }
+        }
+
+        timeRound.doAfterTextChanged { text ->
+            val value = text?.toString()?.toIntOrNull()
+            if (value == null || value !in 5..300) {
+                timeRound.error = "От 5 до 300 секунд"
+            } else {
+                main.updateSettingsTimeRound(value)
+            }
+        }
+
+        bonusHren.doAfterTextChanged { text ->
+            val value = text?.toString()?.toIntOrNull()
+            if (value == null || value !in 5..300) {
+                bonusHren.error = "От 5 до 300 секунд"
+            } else {
+                main.updateSettingsTimeRound(value)
+            }
+        }
+
     }
+
+
 }

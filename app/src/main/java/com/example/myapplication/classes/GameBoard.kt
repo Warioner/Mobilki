@@ -46,18 +46,24 @@ class GameBoard @JvmOverloads constructor(
     )
 
     private val bugConfigs = listOf(
-        BugConfig(sizeDp = 64, weight = 100) { x, y, sizePx ->
-            EasyBug(context, x, y, sizePx, 15f, false, 10, R.drawable.kata_bug)
-        },
-        BugConfig(sizeDp = 64, weight = 50) { x, y, sizePx ->
-            EasyBug(context, x, y, sizePx, 10f, false, 15, R.drawable.anton)
+        BugConfig(sizeDp = 128, weight = 100) { x, y, sizePx ->
+            EasyBug(context, x, y, sizePx, 15f, false, 10, R.drawable.booooss_niggersov)
         },
         BugConfig(sizeDp = 128, weight = 100) { x, y, sizePx ->
-            NormalBug(context, x, y, sizePx, 20f, false, 30, R.drawable.misha_bug)
+            EasyBug(context, x, y, sizePx, 10f, false, 15, R.drawable.misha_bug)
         },
-        BugConfig(sizeDp = 128, weight = 1000) { x, y, sizePx ->
-            HardBug(context, x, y, sizePx, 30f, false, 50, R.drawable.pchela)
+        BugConfig(sizeDp = 128, weight = 100) { x, y, sizePx ->
+            NormalBug(context, x, y, sizePx, 50f, false, 30, R.drawable.dimas_ladybug)
         },
+        BugConfig(sizeDp = 128, weight = 100) { x, y, sizePx ->
+            HardBug(context, x, y, sizePx, 100f, false, 50, R.drawable.anton_pchelka)
+        },
+        BugConfig(sizeDp = 128, weight = 100) { x, y, sizePx ->
+            HardBug(context, x, y, sizePx, 100f, false, 50, R.drawable.katya_gus)
+        },
+        BugConfig(sizeDp = 128, weight = 100) { x, y, sizePx ->
+            HardBug(context, x, y, sizePx, 100f, false, 50, R.drawable.bog)
+        }
 
     )
 
@@ -194,6 +200,7 @@ class GameBoard @JvmOverloads constructor(
         addView(bug.view)
     }
 
+
     // --- Обработка касаний ---
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
@@ -222,7 +229,7 @@ class GameBoard @JvmOverloads constructor(
             }
 
             if (!hit) {
-                points -= 5
+                points -= 100*(settings?.userDifficulty?:1)
                 onScoreChanged?.invoke(points)
             }
 

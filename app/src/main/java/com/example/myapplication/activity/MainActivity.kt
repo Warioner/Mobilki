@@ -11,11 +11,12 @@ import com.example.myapplication.classes.SettingsGame
 import com.example.myapplication.classes.User
 import com.example.myapplication.fragment.Game
 import com.example.myapplication.fragment.Menu
+import com.example.myapplication.fragment.Settings
 import com.example.myapplication.fragment.Registration
 
 class MainActivity : AppCompatActivity() {
     var user: User? = null
-    var settings = SettingsGame(countBug = 10, speedGame = 100, timeRound = 30, 1)
+    var settings = SettingsGame(countBug = 10, speedGame = 100, timeRound = 30, 1, 1)
     private lateinit var mainLayout: View
 
 
@@ -48,5 +49,40 @@ class MainActivity : AppCompatActivity() {
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, gameFragment)
             .commit()
+    }
+
+    fun updateSettingsCountBug(
+        countBug: Int = settings.countBug
+
+    ) {
+        settings = settings.copy(
+            countBug = countBug
+        )
+    }
+    fun updateSettingsSpeedGame(
+        speedGame: Int = settings.speedGame
+
+        ) {
+        settings = settings.copy(
+            speedGame = speedGame
+        )
+    }
+
+    fun updateSettingsBonusTime(
+        bonusTime: Int = settings.bonusTime
+
+    ) {
+        settings = settings.copy(
+            bonusTime = bonusTime
+        )
+    }
+
+    fun updateSettingsTimeRound(
+        timeRound: Int = settings.timeRound
+
+    ) {
+        settings = settings.copy(
+            timeRound = timeRound
+        )
     }
 }

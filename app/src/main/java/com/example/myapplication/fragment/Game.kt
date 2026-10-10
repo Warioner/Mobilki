@@ -71,10 +71,7 @@ class Game : Fragment() {
     }
 
     private fun onExit() {
-        val intent = Intent(requireContext(), MainActivity::class.java)
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
-        startActivity(intent)
-        requireActivity().finish()
+        (requireActivity() as MainActivity).showMenu()
     }
 
     override fun onDestroyView() {
