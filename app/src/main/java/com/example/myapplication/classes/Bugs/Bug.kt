@@ -6,7 +6,7 @@ import android.widget.FrameLayout
 import android.widget.ImageView
 import androidx.annotation.DrawableRes
 
-open class Bug(
+abstract class Bug(
     context: Context,
     initialX: Float,
     initialY: Float,
@@ -17,7 +17,6 @@ open class Bug(
     imageRes: Int,
     weight: Int = 100,
 ) {
-    // Свойства с публичным геттером и protected сеттером
     var x: Float = initialX
         protected set
     var y: Float = initialY
@@ -25,7 +24,6 @@ open class Bug(
     var dead: Boolean = initialDead
         protected set
 
-    // Свойства только для чтения
     val size: Int = size
     protected val speed: Float = speed
     val points: Int = points
@@ -39,7 +37,6 @@ open class Bug(
 
     protected var vx = 0f
     protected var vy = 0f
-
     init {
         view.setImageResource(imageRes)
         view.scaleType = ImageView.ScaleType.FIT_CENTER
@@ -47,19 +44,15 @@ open class Bug(
         view.translationX = x
         view.translationY = y
     }
-
     fun setImage(res: Int) {
         imageRes = res
         view.setImageResource(res)
     }
-
     fun getImageRes(): Int = imageRes
-
     fun markAsDead() {
         dead = true
         view.visibility = View.GONE
     }
-
     protected fun applyBoundsAndDraw(boardWidth: Int, boardHeight: Int) {
         val maxX = (boardWidth - size).toFloat()
         val maxY = (boardHeight - size).toFloat()
@@ -83,7 +76,6 @@ open class Bug(
         view.translationX = x
         view.translationY = y
     }
-
     open fun move(
         boardWidth: Int,
         boardHeight: Int,

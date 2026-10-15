@@ -14,8 +14,14 @@ import com.example.myapplication.classes.SettingsGame
 import androidx.activity.addCallback
 import com.example.myapplication.activity.MainActivity
 import android.content.Intent
+import androidx.lifecycle.lifecycleScope
+import com.example.myapplication.classes.DataBase
+import com.example.myapplication.classes.RecordDB
+import com.example.myapplication.classes.User
+import kotlinx.coroutines.launch
 
 class Game : Fragment() {
+    lateinit var user: User
     lateinit var settings: SettingsGame
     private lateinit var gameBoard: GameBoard
     private lateinit var timeTextView: TextView
@@ -48,12 +54,27 @@ class Game : Fragment() {
         }
 
         gameBoard.onGameFinished = {
+
+            viewLifecycleOwner.lifecycleScope.launch {
+                val db = DataBase.getDatabase(requireContext())
+                val dao = db.userDao()
+
+                val record = RecordDB(
+                    userName = user.name,
+                    difficulty = settings.userDifficulty,
+                    score = gameBoard.points,
+                    duration = settings.timeRound
+                )
+
+                dao.insertRecord(record)
+            }
+
             if (isAdded) {
                 parentFragmentManager.beginTransaction()
                     .replace(R.id.fragment_container, Results.newInstance(
-                        nickname = "—",
+                        nickname = user.name,
                         score = gameBoard.points,
-                        difficulty = (0).toString()
+                        difficulty = settings.userDifficulty.toString()
                     ))
                     .commit()
             }

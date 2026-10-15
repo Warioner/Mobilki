@@ -32,7 +32,6 @@ class GameBoard @JvmOverloads constructor(
 
     private var settings: SettingsGame? = null
 
-    // --- Таймеры и состояние ---
     private val handler = Handler(Looper.getMainLooper())
     private var running = false
     private var spawned = 0
@@ -47,7 +46,7 @@ class GameBoard @JvmOverloads constructor(
 
     private val bugConfigs = listOf(
         BugConfig(sizeDp = 128, weight = 100) { x, y, sizePx ->
-            EasyBug(context, x, y, sizePx, 15f, false, 10, R.drawable.booooss_niggersov)
+            EasyBug(context, x, y, sizePx, 15f, false, 15, R.drawable.booooss_niggersov)
         },
         BugConfig(sizeDp = 128, weight = 100) { x, y, sizePx ->
             EasyBug(context, x, y, sizePx, 10f, false, 15, R.drawable.misha_bug)
@@ -76,8 +75,6 @@ class GameBoard @JvmOverloads constructor(
         }
         return bugConfigs.last()
     }
-
-    // --- Runnable для игрового цикла ---
 
     private val startGameRunnable = object : Runnable {
         override fun run() {
@@ -138,8 +135,6 @@ class GameBoard @JvmOverloads constructor(
         }
     }
 
-    // --- Публичные методы ---
-
     fun setSettings(settings: SettingsGame) {
         this.settings = settings
     }
@@ -174,17 +169,13 @@ class GameBoard @JvmOverloads constructor(
         handler.removeCallbacksAndMessages(null)
     }
 
-    // --- Спавн жуков ---
 
     private fun spawnBug() {
-        // 1. Выбираем тип жука с учётом весов
         val cfg = randomBugConfig()
 
-        // 2. Конвертируем dp в пиксели
         val density = resources.displayMetrics.density
         val sizePx = (cfg.sizeDp * density).toInt()
 
-        // 3. Случайные координаты внутри поля
         val maxX = (width - sizePx).toFloat()
         val maxY = (height - sizePx).toFloat()
 
@@ -193,15 +184,12 @@ class GameBoard @JvmOverloads constructor(
         val x = Random.nextFloat() * maxX
         val y = Random.nextFloat() * maxY
 
-        // 4. Лямбда из конфига создаёт жука нужного класса
         val bug = cfg.create(x, y, sizePx)
 
         bugs.add(bug)
         addView(bug.view)
     }
 
-
-    // --- Обработка касаний ---
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
         if (!running) {
@@ -238,8 +226,6 @@ class GameBoard @JvmOverloads constructor(
 
         return super.onTouchEvent(event)
     }
-
-    // --- Очистка при уничтожении ---
 
     override fun onDetachedFromWindow() {
         stop()

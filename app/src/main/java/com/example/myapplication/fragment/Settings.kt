@@ -27,7 +27,7 @@ class Settings : Fragment() {
         val seekBar = view.findViewById<SeekBar>(R.id.ScrollSpeedGame)
         val textView = view.findViewById<TextView>(R.id.ShowSpeedGame)
         val countBugs = view.findViewById<EditText>(R.id.EditCountBugs)
-        val bonusHren = view.findViewById<EditText>(R.id.EditTimeToBonus)
+        val bonusTime = view.findViewById<EditText>(R.id.EditTimeToBonus)
         val timeRound = view.findViewById<EditText>(R.id.EditTimeRound)
         seekBar.progress = main.settings.speedGame / 10 - 1
         textView.text = "${main.settings.speedGame}%"
@@ -43,7 +43,7 @@ class Settings : Fragment() {
         })
 
         countBugs.setText(main.settings.countBug.toString())
-        bonusHren.setText(main.settings.bonusTime.toString())
+        bonusTime.setText(main.settings.bonusTime.toString())
         timeRound.setText(main.settings.timeRound.toString())
 
         countBugs.doAfterTextChanged { text ->
@@ -57,17 +57,17 @@ class Settings : Fragment() {
 
         timeRound.doAfterTextChanged { text ->
             val value = text?.toString()?.toIntOrNull()
-            if (value == null || value !in 5..300) {
-                timeRound.error = "От 5 до 300 секунд"
+            if (value == null || value !in 1..999) {
+                timeRound.error = "От 1 до 999 секунд"
             } else {
                 main.updateSettingsTimeRound(value)
             }
         }
 
-        bonusHren.doAfterTextChanged { text ->
+        bonusTime.doAfterTextChanged { text ->
             val value = text?.toString()?.toIntOrNull()
-            if (value == null || value !in 5..300) {
-                bonusHren.error = "От 5 до 300 секунд"
+            if (value == null || value !in 1..999) {
+                bonusTime.error = "От 1 до 999 секунд"
             } else {
                 main.updateSettingsTimeRound(value)
             }

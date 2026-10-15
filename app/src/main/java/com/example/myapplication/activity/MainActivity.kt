@@ -11,11 +11,10 @@ import com.example.myapplication.classes.SettingsGame
 import com.example.myapplication.classes.User
 import com.example.myapplication.fragment.Game
 import com.example.myapplication.fragment.Menu
-import com.example.myapplication.fragment.Settings
 import com.example.myapplication.fragment.Registration
 
 class MainActivity : AppCompatActivity() {
-    var user: User? = null
+    lateinit var user: User
     var settings = SettingsGame(countBug = 10, speedGame = 100, timeRound = 30, 1, 1)
     private lateinit var mainLayout: View
 
@@ -36,6 +35,7 @@ class MainActivity : AppCompatActivity() {
                 .replace(R.id.fragment_container, Registration())
                 .commit()
         }
+
     }
     fun showMenu() {
         supportFragmentManager.beginTransaction()
@@ -45,6 +45,7 @@ class MainActivity : AppCompatActivity() {
     fun showGame() {
         val gameFragment = Game()
         gameFragment.settings = settings
+        gameFragment.user = user;
 
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, gameFragment)

@@ -14,15 +14,22 @@ import android.widget.SeekBar
 import android.widget.Spinner
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.example.myapplication.R
 import com.example.myapplication.activity.MainActivity
 import com.example.myapplication.classes.User
+import com.example.myapplication.classes.UserDao
+import com.example.myapplication.classes.DataBase
+import com.example.myapplication.classes.UserDB
+import kotlinx.coroutines.launch
 
 class Registration : Fragment() {
 
     private var selectedDay = 0
     private var selectedMonth = 0
     private var selectedYear = 0
+
+    private lateinit var dao: UserDao
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -36,6 +43,9 @@ class Registration : Fragment() {
         baton.setOnClickListener {
             pressButton(view)
         }
+
+        val db = DataBase.getDatabase(requireContext())
+        dao = db.userDao()
 
         val calendarViewCv = view.findViewById<CalendarView>(R.id.calendarView)
 
@@ -51,40 +61,49 @@ class Registration : Fragment() {
         }
     }
 
-    private fun createUser(view: View): User? {
-        var flag = false
+    private suspend fun createUser(view: View): User? {
         val nameEt = view.findViewById<EditText>(R.id.InputNickname)
         val genderRg = view.findViewById<RadioGroup>(R.id.inputGender)
         val courseSp = view.findViewById<Spinner>(R.id.inputCourse)
         val seekBarSb = view.findViewById<SeekBar>(R.id.inputDifficulte)
 
+        val nameText = nameEt.text.toString().trim()
         val regex = Regex("^[a-zA-Zа-яА-ЯеЁ]+$")
-        if (!regex.matches(nameEt.text.toString())) {
+        var flag = false
+
+        val foundUser = dao.getUserByName(nameText)
+        if (foundUser != null) {
+            nameEt.error = "Имя пользователя уже занято!"
+            flag = true
+        }
+
+        if (!regex.matches(nameText)) {
             nameEt.error = "Только буквы, без пробелов и цифр!"
             flag = true
         }
+
         val genderText = when (genderRg.checkedRadioButtonId) {
             R.id.radioFemale -> "Female"
             R.id.radioMale -> "Male"
             R.id.radioOther -> "Another"
             else -> "Не выбран"
         }
-        if(flag == true)
-        {
-            val Linear = view.findViewById<LinearLayout>(R.id.Linear)
-            Linear.visibility = View.INVISIBLE;
+
+        if (flag) {
+            view.findViewById<LinearLayout>(R.id.Linear).visibility = View.INVISIBLE
             return null
         }
-            return User(
-                name = nameEt.text.toString(),
-                course = courseSp.selectedItemPosition + 1,
-                difficulty = seekBarSb.progress,
-                birthDay = selectedDay,
-                birthMonth = selectedMonth,
-                birthYear = selectedYear,
-                gender = genderText,
-                zodiac = whos_That_Zodiak(selectedDay, selectedMonth)
-            )
+
+        return User(
+            name = nameText,
+            course = courseSp.selectedItemPosition + 1,
+            difficulty = seekBarSb.progress,
+            birthDay = selectedDay,
+            birthMonth = selectedMonth,
+            birthYear = selectedYear,
+            gender = genderText,
+            zodiac = whos_That_Zodiak(selectedDay, selectedMonth)
+        )
     }
     private fun outUser(view: View, user: User) {
         val tvResult = view.findViewById<TextView>(R.id.userInfo)
@@ -115,15 +134,30 @@ class Registration : Fragment() {
         ivZodiac.setImageResource(imageResId)
     }
     private fun pressButton(view: View) {
-        val createdUser = createUser(view)
-        if (createdUser != null) {
-            outUser(view, createdUser)
+        viewLifecycleOwner.lifecycleScope.launch {
+            val createdUser = createUser(view)
 
-            (requireActivity() as MainActivity).user = createdUser
-            (requireActivity() as MainActivity).settings.userDifficulty = createdUser.difficulty
+            if (createdUser != null) {
+                outUser(view, createdUser)
 
-            view.findViewById<LinearLayout>(R.id.Linear).visibility = View.VISIBLE
-            (requireActivity() as MainActivity).showMenu()
+                (requireActivity() as MainActivity).user = createdUser
+                (requireActivity() as MainActivity).settings.userDifficulty = createdUser.difficulty
+
+                val newUser = UserDB(
+                    name = createdUser.name,
+                    gender = createdUser.gender,
+                    course = createdUser.course,
+                    difficulty = createdUser.difficulty,
+                    birthYear = createdUser.birthYear,
+                    birthMonth = createdUser.birthMonth,
+                    birthDay = createdUser.birthDay,
+                    zodiac = createdUser.zodiac,
+                )
+                dao.insertUser(newUser)
+
+                view.findViewById<LinearLayout>(R.id.Linear).visibility = View.VISIBLE
+                (requireActivity() as MainActivity).showMenu()
+            }
         }
     }
 
