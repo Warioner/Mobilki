@@ -30,6 +30,9 @@ class Results : Fragment(R.layout.results) {
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
             view.findViewById<Button>(R.id.btnExit).performClick()
         }
+        view.findViewById<Button>(R.id.btnRecords).setOnClickListener {
+            (requireActivity() as MainActivity).showRecords()
+        }
     }
 
     companion object {

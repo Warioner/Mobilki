@@ -44,8 +44,8 @@ class Registration : Fragment() {
             pressButton(view)
         }
 
-        val db = DataBase.getDatabase(requireContext())
-        dao = db.userDao()
+        val db = DataBase.getDatabase(requireContext())// коннект с бд
+        dao = db.userDao()//возможность обращения к бд
 
         val calendarViewCv = view.findViewById<CalendarView>(R.id.calendarView)
 
@@ -71,7 +71,7 @@ class Registration : Fragment() {
         val regex = Regex("^[a-zA-Zа-яА-ЯеЁ]+$")
         var flag = false
 
-        val foundUser = dao.getUserByName(nameText)
+        val foundUser = dao.getUserByName(nameText)// обратились к бд
         if (foundUser != null) {
             nameEt.error = "Имя пользователя уже занято!"
             flag = true
@@ -143,7 +143,7 @@ class Registration : Fragment() {
                 (requireActivity() as MainActivity).user = createdUser
                 (requireActivity() as MainActivity).settings.userDifficulty = createdUser.difficulty
 
-                val newUser = UserDB(
+                val newUser = UserDB(//Заполняем данные
                     name = createdUser.name,
                     gender = createdUser.gender,
                     course = createdUser.course,
@@ -153,7 +153,7 @@ class Registration : Fragment() {
                     birthDay = createdUser.birthDay,
                     zodiac = createdUser.zodiac,
                 )
-                dao.insertUser(newUser)
+                dao.insertUser(newUser)// помещаем данные в таблицу
 
                 view.findViewById<LinearLayout>(R.id.Linear).visibility = View.VISIBLE
                 (requireActivity() as MainActivity).showMenu()

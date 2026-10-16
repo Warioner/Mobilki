@@ -10,5 +10,6 @@ data class RecordDB(
     val difficulty: Int,
     val score: Int,
     val duration: Int,
-    val date: Long = System.currentTimeMillis()
+    val date: Long = System.currentTimeMillis(),
+    //val startedAt: Long = 0L
 )

@@ -24,6 +24,15 @@ interface UserDao {
     suspend fun getRecordsByUserName(name: String): List<RecordDB>
 
     // Получить ВСЕ результаты
-    @Query("SELECT * FROM game_records ORDER BY score DESC")
+//    @Query("SELECT * FROM game_records ORDER BY score DESC")
+//    suspend fun getAllRecords(): List<RecordDB>
+    @Query("SELECT * FROM game_records")
     suspend fun getAllRecords(): List<RecordDB>
+
+    @Query("SELECT * FROM users ORDER BY name COLLATE NOCASE ASC, id ASC LIMIT :limit OFFSET :offset")
+    suspend fun getUsersPage(limit: Int, offset: Int): List<UserDB>
+
+
+
 }
+

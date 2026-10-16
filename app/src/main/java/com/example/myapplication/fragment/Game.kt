@@ -28,6 +28,8 @@ class Game : Fragment() {
     private lateinit var scoreTextView: TextView
     private lateinit var exitButton: Button
 
+    private var startedAt = 0L
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
@@ -88,6 +90,7 @@ class Game : Fragment() {
             exitButton.performClick()
         }
 
+        //startedAt = System.currentTimeMillis()
         gameBoard.start(settings)
     }
 
