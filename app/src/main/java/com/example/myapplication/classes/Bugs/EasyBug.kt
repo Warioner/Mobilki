@@ -28,6 +28,7 @@ class EasyBug(
         boardWidth: Int,
         boardHeight: Int,
         speedMultiplier: Float,
+        activeBonuses : BooleanArray
     ) {
         if (dead) return
         if (boardWidth <= size || boardHeight <= size) return
@@ -37,8 +38,6 @@ class EasyBug(
         x += vx * effectiveSpeed
         y += vy * effectiveSpeed
 
-
-        // Вызываем общую функцию базового класса: отскок + применение позиции
         applyBoundsAndDraw(boardWidth, boardHeight)
 
         updateRotation()

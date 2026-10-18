@@ -26,7 +26,7 @@ abstract class Bug(
 
     val size: Int = size
     protected val speed: Float = speed
-    val points: Int = points
+    var points: Int = points
     val weight: Int = weight
 
     private var imageRes: Int = imageRes
@@ -76,11 +76,7 @@ abstract class Bug(
         view.translationX = x
         view.translationY = y
     }
-    open fun move(
-        boardWidth: Int,
-        boardHeight: Int,
-        speedMultiplier: Float,
-    ) {
+    open fun move(boardWidth: Int, boardHeight: Int, speedMultiplier: Float, activeBonuses: BooleanArray){
     }
 
     fun contains(touchX: Float, touchY: Float): Boolean {

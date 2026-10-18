@@ -22,7 +22,8 @@ class NormalBug(
         vy = Math.sin(angle).toFloat()
     }
 
-    override fun move(boardWidth: Int, boardHeight: Int, speedMultiplier: Float) {
+    override fun move(boardWidth: Int, boardHeight: Int, speedMultiplier: Float,
+                      activeBonuses : BooleanArray) {
         if (dead) return
         if (boardWidth <= size || boardHeight <= size) return
 

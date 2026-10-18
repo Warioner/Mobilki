@@ -27,6 +27,7 @@ class HardBug(
         boardWidth: Int,
         boardHeight: Int,
         speedMultiplier: Float,
+        activeBonuses : BooleanArray
     ) {
         if (dead) return
         if (boardWidth <= size || boardHeight <= size) return

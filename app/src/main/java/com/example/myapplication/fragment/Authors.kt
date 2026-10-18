@@ -26,6 +26,4 @@ class Authors : Fragment() {
         val listView = view.findViewById<ListView>(R.id.listViewAuthors)
         listView.adapter = AuthorAdapter(requireContext(), authors)
     }
-
-
 }

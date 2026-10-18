@@ -18,7 +18,7 @@ import com.example.myapplication.fragment.Records
 
 class MainActivity : AppCompatActivity() {
     lateinit var user: User
-    var settings = SettingsGame(countBug = 10, speedGame = 100, timeRound = 30, 1, 1)
+    var settings = SettingsGame(countBug = 10, speedGame = 100, timeRound = 30, 15, 1)
     private lateinit var mainLayout: View
 
 
