@@ -8,6 +8,8 @@ import android.view.MotionEvent
 import android.widget.FrameLayout
 import com.example.myapplication.R
 import com.example.myapplication.classes.Bonus.Bonus
+import com.example.myapplication.classes.Bonus.TiltController
+import com.example.myapplication.classes.SoundManager
 import com.example.myapplication.classes.Bugs.Bug
 import com.example.myapplication.classes.Bugs.EasyBug
 import com.example.myapplication.classes.Bugs.NormalBug
@@ -50,11 +52,11 @@ class GameBoard @JvmOverloads constructor(
     )
 
     private val bugConfigs = listOf(
-        BugConfig(128, 100) { x, y, s -> EasyBug(context, x, y, s, 15f, false, 15, R.drawable.booooss_niggersov) },
-        BugConfig(128, 100) { x, y, s -> EasyBug(context, x, y, s, 10f, false, 15, R.drawable.misha_bug) },
+        BugConfig(128, 100) { x, y, s -> EasyBug(context, x, y, s, 15f, false, 15, R.drawable.booooss_niggersov, R.drawable.) },
+        BugConfig(128, 100) { x, y, s -> EasyBug(context, x, y, s, 10f, false, 15, R.drawable.misha_bug,R.bug_) },
         BugConfig(128, 100) { x, y, s -> NormalBug(context, x, y, s, 50f, false, 30, R.drawable.dimas_ladybug) },
         BugConfig(128, 100) { x, y, s -> HardBug(context, x, y, s, 100f, false, 50, R.drawable.anton_pchelka) },
-        BugConfig(128, 100) { x, y, s -> HardBug(context, x, y, s, 100f, false, 50, R.drawable.katya_gus) },
+        BugConfig(128, 100) { x, y, s -> HardBug(context, x, y, s, 100f, false, 50, R.drawable.katya_gus, R.sounds.katya_scream) },
         BugConfig(128, 100) { x, y, s -> HardBug(context, x, y, s, 100f, false, 50, R.drawable.bog) }
     )
 
@@ -83,12 +85,20 @@ class GameBoard @JvmOverloads constructor(
         }
         return bonusConfigs.last().second
     }
+    private val tiltEndRunnable = Runnable { endTiltBonus() }
     private fun activateTiltBonus(durationMs: Int) {
         activeBonuses[0] = true
+        TiltController.start(context)
 
-        handler.postDelayed({
-            activeBonuses[0] = false
-        }, durationMs.toLong())
+
+        handler.removeCallbacks(tiltEndRunnable)
+        handler.postDelayed(tiltEndRunnable, durationMs.toLong())
+
+    }
+    private fun endTiltBonus() {
+        activeBonuses[0] = false
+        TiltController.stop()
+        bugs.forEach { it.restoreNormalSpeed() }
     }
 
     private val startGameRunnable = object : Runnable {
@@ -184,8 +194,9 @@ class GameBoard @JvmOverloads constructor(
     fun stop() {
         running = false
         handler.removeCallbacksAndMessages(null)
+        activeBonuses[0] = false     // новая строка
+        TiltController.stop()        // новая строка: вызов функции из TiltController
     }
-
     private fun spawnBug() {
         val cfg = randomBugConfig()
         val density = resources.displayMetrics.density

@@ -1,6 +1,7 @@
 package com.example.myapplication.classes.Bugs
 
 import android.content.Context
+import com.example.myapplication.classes.Bonus.TiltController
 import androidx.annotation.DrawableRes
 import kotlin.random.Random
 
@@ -26,6 +27,9 @@ class NormalBug(
                       activeBonuses : BooleanArray) {
         if (dead) return
         if (boardWidth <= size || boardHeight <= size) return
+        if (TiltController.enabled) {
+            applyTilt()
+        }
 
         t += 0.15f
         val s = speed * speedMultiplier.coerceAtLeast(0f)

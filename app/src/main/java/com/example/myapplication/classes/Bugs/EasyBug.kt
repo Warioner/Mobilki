@@ -1,6 +1,7 @@
 package com.example.myapplication.classes.Bugs
 
 import android.content.Context
+import com.example.myapplication.classes.Bonus.TiltController
 import androidx.annotation.DrawableRes
 import kotlin.math.cos
 import kotlin.math.sin
@@ -33,6 +34,9 @@ class EasyBug(
         if (dead) return
         if (boardWidth <= size || boardHeight <= size) return
 
+        if(TiltController.enabled){
+            applyTilt()
+        }
         val effectiveSpeed = speed * speedMultiplier.coerceAtLeast(0f)
 
         x += vx * effectiveSpeed

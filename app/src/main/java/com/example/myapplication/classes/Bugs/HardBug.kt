@@ -1,6 +1,7 @@
 package com.example.myapplication.classes.Bugs
 
 import android.content.Context
+import com.example.myapplication.classes.Bonus.TiltController
 import androidx.annotation.DrawableRes
 import kotlin.random.Random
 
@@ -31,7 +32,17 @@ class HardBug(
     ) {
         if (dead) return
         if (boardWidth <= size || boardHeight <= size) return
-        updateState()
+        if(TiltController.enabled){
+            applyTilt()
+        }
+        else {
+            updateState()
+            if (state == State.WALK) {
+                // плавное блуждание
+                angle += Random.nextDouble(-0.15, 0.15)
+                updateVelocity()
+            }
+        }
 
         val stateSpeed = when (state) {
             State.WALK -> 1f
@@ -40,15 +51,15 @@ class HardBug(
         }
         val effectiveSpeed = speed * speedMultiplier.coerceAtLeast(0f) * stateSpeed
 
-        when (state) {
-            State.WALK -> {
-                // плавное блуждание: небольшой случайный поворот каждый кадр
-                angle += Random.nextDouble(-0.15, 0.15)
-                updateVelocity()
-            }
-            State.PAUSE -> { /* стоим */ }
-            State.DASH -> { /* летим по прямой */ }
-        }
+//        when (state) {
+//            State.WALK -> {
+//                // плавное блуждание: небольшой случайный поворот каждый кадр
+//                angle += Random.nextDouble(-0.15, 0.15)
+//                updateVelocity()
+//            }
+//            State.PAUSE -> { /* стоим */ }
+//            State.DASH -> { /* летим по прямой */ }
+//        }
 
         x += vx * effectiveSpeed
         y += vy * effectiveSpeed
@@ -56,7 +67,9 @@ class HardBug(
         applyBoundsAndDraw(boardWidth, boardHeight)
 
         // после отскока базовый класс мог изменить vx/vy — синхронизируем угол
-        angle = Math.atan2(vy.toDouble(), vx.toDouble())
+        if (vx != 0f || vy != 0f) {
+            angle = Math.atan2(vy.toDouble(), vx.toDouble())
+        }
         view.rotation = Math.toDegrees(angle).toFloat() + 90f
     }
 

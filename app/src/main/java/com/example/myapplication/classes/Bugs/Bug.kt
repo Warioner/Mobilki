@@ -4,6 +4,14 @@ import android.content.Context
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.ImageView
+import com.example.myapplication.R
+import com.example.myapplication.classes.Bonus.TiltController
+import com.example.myapplication.classes.SoundManager
+import kotlin.math.abs
+import kotlin.math.cos
+import kotlin.math.hypot
+import kotlin.math.sin
+import kotlin.random.Random
 import androidx.annotation.DrawableRes
 
 abstract class Bug(
@@ -16,6 +24,7 @@ abstract class Bug(
     points: Int,
     imageRes: Int,
     weight: Int = 100,
+    private val screamRes: Int = R.raw.sounds,
 ) {
     var x: Float = initialX
         protected set
@@ -53,25 +62,77 @@ abstract class Bug(
         dead = true
         view.visibility = View.GONE
     }
+
+    /** vx, vy - направление (длина ~1), реальную скорость задаёт speed. */
+    private var lastScreamTime = 0L
+
+    /** Крик конкретного жука (не чаще раза в 400 мс, чтобы не было каши). */
+    fun scream() {
+        val now = System.currentTimeMillis()
+        if (now - lastScreamTime < 400) return
+        lastScreamTime = now
+        // немного разная высота тона, чтобы жуки звучали по-разному
+        val rate = 0.8f + (weight % 5) * 0.1f
+        SoundManager.play(screamRes, volume = 0.6f, rate = rate)
+    }
+
+    protected fun applyTilt() {
+        if (!TiltController.enabled) return
+
+        vx += TiltController.ax * TILT_ACCEL
+        vy += TiltController.ay * TILT_ACCEL
+
+        vx *= 0.99f
+        vy *= 0.99f
+
+        val len = hypot(vx, vy)
+        if (len > MAX_TILT_SPEED) {
+            vx = vx / len * MAX_TILT_SPEED
+            vy = vy / len * MAX_TILT_SPEED
+        }
+    }
+
+    fun restoreNormalSpeed() {
+        val len = hypot(vx, vy)
+        if (len > 0.001f) {
+            vx /= len
+            vy /= len
+        } else {
+            val a = Random.nextDouble() * 2.0 * Math.PI
+            vx = cos(a).toFloat()
+            vy = sin(a).toFloat()
+        }
+    }
     protected fun applyBoundsAndDraw(boardWidth: Int, boardHeight: Int) {
         val maxX = (boardWidth - size).toFloat()
         val maxY = (boardHeight - size).toFloat()
 
+        // при наклоне удар о стенку гасит скорость -> жуки скапливаются в углу
+        val bounce = if (TiltController.enabled) 0.3f else 1f
+        var hardHit = false
+
         if (x <= 0f) {
             x = 0f
-            vx = Math.abs(vx)
+            if (abs(vx) > HIT_THRESHOLD) hardHit = true
+            vx = abs(vx) * bounce
         } else if (x >= maxX) {
             x = maxX
-            vx = -Math.abs(vx)
+            if (abs(vx) > HIT_THRESHOLD) hardHit = true
+            vx = -abs(vx) * bounce
         }
 
         if (y <= 0f) {
             y = 0f
-            vy = Math.abs(vy)
+            if (abs(vy) > HIT_THRESHOLD) hardHit = true
+            vy = abs(vy) * bounce
         } else if (y >= maxY) {
             y = maxY
-            vy = -Math.abs(vy)
+            if (abs(vy) > HIT_THRESHOLD) hardHit = true
+            vy = -abs(vy) * bounce
         }
+
+        // кричим только при сильном ударе во время бонуса
+        if (hardHit && TiltController.enabled) scream()
 
         view.translationX = x
         view.translationY = y
@@ -89,5 +150,10 @@ abstract class Bug(
         val dy = touchY - centerY
 
         return dx * dx + dy * dy <= rHitbox * rHitbox
+    }
+    companion object {
+        const val TILT_ACCEL = 0.05f      // как быстро жуки разгоняются; подберите
+        const val MAX_TILT_SPEED = 3f     // максимум длины вектора направления
+        const val HIT_THRESHOLD = 0.8f    // порог "сильного удара" для крика
     }
 }
