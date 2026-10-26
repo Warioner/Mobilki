@@ -11,9 +11,8 @@ class Bonus(
     val initialX: Float,
     val initialY: Float,
     val size: Int,
+    val duration: Int,
     val imageRes: Int,
-    val weight: Int = 100,
-    val timeWork: Int
 ) {
 
     var x: Float = initialX
@@ -32,7 +31,7 @@ class Bonus(
     }
 
     fun activate(){
-        setActive(timeWork)
+        setActive(duration)
     }
 
 

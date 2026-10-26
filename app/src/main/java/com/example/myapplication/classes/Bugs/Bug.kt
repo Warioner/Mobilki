@@ -23,8 +23,7 @@ abstract class Bug(
     initialDead: Boolean,
     points: Int,
     imageRes: Int,
-    weight: Int = 100,
-    private val screamRes: Int = R.raw.sounds,
+    private val screamRes: Int ,
 ) {
     var x: Float = initialX
         protected set
@@ -36,7 +35,6 @@ abstract class Bug(
     val size: Int = size
     protected val speed: Float = speed
     var points: Int = points
-    val weight: Int = weight
 
     private var imageRes: Int = imageRes
 
@@ -63,16 +61,13 @@ abstract class Bug(
         view.visibility = View.GONE
     }
 
-    /** vx, vy - направление (длина ~1), реальную скорость задаёт speed. */
     private var lastScreamTime = 0L
 
-    /** Крик конкретного жука (не чаще раза в 400 мс, чтобы не было каши). */
     fun scream() {
         val now = System.currentTimeMillis()
-        if (now - lastScreamTime < 400) return
+        if (now - lastScreamTime < 200) return
         lastScreamTime = now
-        // немного разная высота тона, чтобы жуки звучали по-разному
-        val rate = 0.8f + (weight % 5) * 0.1f
+        val rate = 0.8f + (size % 5) * 0.1f
         SoundManager.play(screamRes, volume = 0.6f, rate = rate)
     }
 

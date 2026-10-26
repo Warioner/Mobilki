@@ -9,8 +9,6 @@ import android.hardware.SensorManager
 object TiltController {
     var enabled = false
         private set
-
-    // >0: жуков тянет вправо / вниз по экрану
     var ax = 0f
         private set
     var ay = 0f

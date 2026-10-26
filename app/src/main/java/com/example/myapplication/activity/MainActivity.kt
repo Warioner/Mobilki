@@ -9,6 +9,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.FragmentManager
 import com.example.myapplication.R
 import com.example.myapplication.classes.SettingsGame
+import com.example.myapplication.classes.SoundManager
 import com.example.myapplication.classes.User
 import com.example.myapplication.fragment.Game
 import com.example.myapplication.fragment.Menu
@@ -33,32 +34,31 @@ class MainActivity : AppCompatActivity() {
             insets
         }
         if (savedInstanceState == null) {
-            showLogin()   // вместо Registration() первым открывается экран входа
+            showLogin()
         }
 
-//        if (savedInstanceState == null) {
-//            supportFragmentManager.beginTransaction()
-//                .replace(R.id.fragment_container, Registration())
-//                .commit()
-//        }
+        SoundManager.init(this,
+            R.raw.scream
+        )
 
     }
     fun showLogin() {
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, Login())
+            .addToBackStack(null)
             .commit()
     }
     fun showRecords() {
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, Records())
-            .addToBackStack(null)   // «Назад» вернёт на экран результатов
+            .addToBackStack(null)
             .commit()
     }
 
     fun showRegistration() {
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, Registration())
-            .addToBackStack(null)   // кнопка «Назад» вернёт на экран входа
+            .addToBackStack(null)
             .commit()
     }
     fun showMenu() {

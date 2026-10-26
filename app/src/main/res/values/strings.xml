@@ -17,4 +17,7 @@
         <p>Текст правил будет добавлен позже. А может и нет:3.
         Давайте, не злитесь. Добра и позитива!</p>
     ]]></string>
+    <string name="appwidget_text">EXAMPLE</string>
+    <string name="add_widget">Add widget</string>
+    <string name="app_widget_description">This is an app widget description</string>
 </resources>

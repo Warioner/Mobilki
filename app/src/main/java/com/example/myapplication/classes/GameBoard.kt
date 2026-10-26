@@ -28,7 +28,7 @@ class GameBoard @JvmOverloads constructor(
 
     val bugs = mutableListOf<Bug>()
     val spawnedBonuses = mutableListOf<Bonus>()
-    val activeBonuses = BooleanArray(2) { false }
+    val activeBonuses = BooleanArray(1) { false }
 
     var points = 0
         private set
@@ -36,14 +36,14 @@ class GameBoard @JvmOverloads constructor(
     var countBugs = 0
         private set
 
-    private var settings: SettingsGame? = null
+    lateinit private var settings: SettingsGame
 
     private val handler = Handler(Looper.getMainLooper())
     private var running = false
     private var spawned = 0
     private var timeLeft = 0
 
-    private val initialDelayMs = 2500L
+    private val initialDelayMs = 1500L
 
     private data class BugConfig(
         val sizeDp: Int,
@@ -52,12 +52,12 @@ class GameBoard @JvmOverloads constructor(
     )
 
     private val bugConfigs = listOf(
-        BugConfig(128, 100) { x, y, s -> EasyBug(context, x, y, s, 15f, false, 15, R.drawable.booooss_niggersov, R.drawable.) },
-        BugConfig(128, 100) { x, y, s -> EasyBug(context, x, y, s, 10f, false, 15, R.drawable.misha_bug,R.bug_) },
-        BugConfig(128, 100) { x, y, s -> NormalBug(context, x, y, s, 50f, false, 30, R.drawable.dimas_ladybug) },
-        BugConfig(128, 100) { x, y, s -> HardBug(context, x, y, s, 100f, false, 50, R.drawable.anton_pchelka) },
-        BugConfig(128, 100) { x, y, s -> HardBug(context, x, y, s, 100f, false, 50, R.drawable.katya_gus, R.sounds.katya_scream) },
-        BugConfig(128, 100) { x, y, s -> HardBug(context, x, y, s, 100f, false, 50, R.drawable.bog) }
+        BugConfig(128, 100) { x, y, s -> EasyBug(context, x, y, s, 15f, false, 15, R.drawable.booooss_niggersov, R.raw.scream) },
+        BugConfig(128, 100) { x, y, s -> EasyBug(context, x, y, s, 10f, false, 15, R.drawable.misha_bug,R.raw.scream) },
+        BugConfig(128, 100) { x, y, s -> NormalBug(context, x, y, s, 50f, false, 30, R.drawable.dimas_ladybug,R.raw.scream) },
+        BugConfig(128, 100) { x, y, s -> HardBug(context, x, y, s, 100f, false, 50, R.drawable.anton_pchelka,R.raw.scream) },
+        BugConfig(128, 100) { x, y, s -> HardBug(context, x, y, s, 100f, false, 50, R.drawable.katya_gus, R.raw.scream) },
+        BugConfig(128, 100) { x, y, s -> HardBug(context, x, y, s, 100f, false, 50, R.drawable.bog,R.raw.scream) }
     )
 
     private fun randomBugConfig(): BugConfig {
@@ -70,29 +70,31 @@ class GameBoard @JvmOverloads constructor(
         return bugConfigs.last()
     }
 
+    private data class BonusConfig(
+        val sizeDp: Int,
+        val weight: Int,
+        val create: (x: Float, y: Float, sizePx: Int) -> Bonus
+    )
     private val bonusConfigs = listOf(
-        100 to { x: Float, y: Float, sizePx: Int, onActivate: (Int) -> Unit ->
-            Bonus(context, onActivate, x, y, sizePx, R.drawable.anton, 100, timeWork = 15000)
-        }
+        BonusConfig(16, 100) {x, y, size -> Bonus(context, {dur -> activateTiltBonus(dur) },x, y, size, 15, R.drawable.anton)},
     )
 
-    private fun randomBonusFactory(): (Float, Float, Int, (Int) -> Unit) -> Bonus {
-        val totalWeight = bonusConfigs.sumOf { it.first }
+    private fun randomBonusFactory(): BonusConfig {
+        val totalWeight = bonusConfigs.sumOf { it.weight }
         var random = Random.nextInt(totalWeight)
-        for ((weight, factory) in bonusConfigs) {
-            random -= weight
-            if (random < 0) return factory
+        for (bonus in bonusConfigs) {
+            random -= bonus.weight
+            if (random < 0) return bonus
         }
-        return bonusConfigs.last().second
+        return bonusConfigs.last()
     }
     private val tiltEndRunnable = Runnable { endTiltBonus() }
-    private fun activateTiltBonus(durationMs: Int) {
+
+    private fun activateTiltBonus(duration: Int) {
         activeBonuses[0] = true
         TiltController.start(context)
-
-
         handler.removeCallbacks(tiltEndRunnable)
-        handler.postDelayed(tiltEndRunnable, durationMs.toLong())
+        handler.postDelayed(tiltEndRunnable, duration* 1000L)
 
     }
     private fun endTiltBonus() {
@@ -143,7 +145,7 @@ class GameBoard @JvmOverloads constructor(
         override fun run() {
             if (!running) return
             spawnBonus()
-            val delayMs = (settings?.bonusTime?.toLong() ?: 15L) * 1000L
+            val delayMs = settings.bonusTime.toLong()  * 1000L
             handler.postDelayed(this, delayMs)
         }
     }
@@ -166,11 +168,6 @@ class GameBoard @JvmOverloads constructor(
 
     fun start(settings: SettingsGame) {
         setSettings(settings)
-        start()
-    }
-
-    fun start() {
-        val s = settings ?: return
         stop()
         removeAllViews()
         bugs.clear()
@@ -181,9 +178,9 @@ class GameBoard @JvmOverloads constructor(
         }
 
         points = 0
-        countBugs = s.countBug.coerceAtLeast(0)
+        countBugs = settings.countBug.coerceAtLeast(0)
         spawned = 0
-        timeLeft = s.timeRound.coerceAtLeast(1)
+        timeLeft = settings.timeRound.coerceAtLeast(1)
         running = false
 
         onScoreChanged?.invoke(points)
@@ -212,6 +209,7 @@ class GameBoard @JvmOverloads constructor(
     }
 
     private fun spawnBonus() {
+        val factoryB = randomBonusFactory()
         val density = resources.displayMetrics.density
         val sizePx = (64 * density).toInt()
         val maxX = (width - sizePx).toFloat()
@@ -221,10 +219,7 @@ class GameBoard @JvmOverloads constructor(
         val x = Random.nextFloat() * maxX
         val y = Random.nextFloat() * maxY
 
-        val factory = randomBonusFactory()
-        val bonus = factory(x, y, sizePx) { duration ->
-            activateTiltBonus(duration)
-        }
+        val bonus = factoryB.create(x, y, sizePx)
 
         spawnedBonuses.add(bonus)
         addView(bonus.view)
@@ -268,15 +263,13 @@ class GameBoard @JvmOverloads constructor(
             }
 
             if (!hit) {
-                points -= 100 * (settings?.userDifficulty ?: 1)
+                points -= 100 * (settings.userDifficulty + 1)
                 onScoreChanged?.invoke(points)
             }
             return true
         }
         return super.onTouchEvent(event)
     }
-
-    // Добавлено для исправления предупреждения линтера
     override fun performClick(): Boolean {
         return super.performClick()
     }

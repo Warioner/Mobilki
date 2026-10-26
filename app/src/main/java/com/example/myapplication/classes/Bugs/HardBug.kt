@@ -14,8 +14,8 @@ class HardBug(
     initialDead: Boolean,
     points: Int,
     imageRes: Int,
-    weight: Int = 1000,
-) : Bug(context, initialX, initialY, size, speed, initialDead, points, imageRes, weight) {
+    private val screamRes: Int ,
+) : Bug(context, initialX, initialY, size, speed, initialDead, points, imageRes, screamRes)  {
     private enum class State{WALK, PAUSE, DASH}
     private var state = State.WALK
     private var stateFramesLeft = randomDuration(State.WALK)
@@ -46,20 +46,10 @@ class HardBug(
 
         val stateSpeed = when (state) {
             State.WALK -> 1f
-            State.PAUSE -> 0f
+            State.PAUSE -> 0.5f
             State.DASH -> 2.5f
         }
         val effectiveSpeed = speed * speedMultiplier.coerceAtLeast(0f) * stateSpeed
-
-//        when (state) {
-//            State.WALK -> {
-//                // плавное блуждание: небольшой случайный поворот каждый кадр
-//                angle += Random.nextDouble(-0.15, 0.15)
-//                updateVelocity()
-//            }
-//            State.PAUSE -> { /* стоим */ }
-//            State.DASH -> { /* летим по прямой */ }
-//        }
 
         x += vx * effectiveSpeed
         y += vy * effectiveSpeed

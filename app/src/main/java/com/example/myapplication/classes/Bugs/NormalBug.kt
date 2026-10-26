@@ -14,8 +14,8 @@ class NormalBug(
     initialDead: Boolean,
     points: Int,
     imageRes: Int,
-    weight: Int = 100,
-) : Bug(context, initialX, initialY, size, speed, initialDead, points, imageRes, weight) {
+    private val screamRes: Int ,
+) : Bug(context, initialX, initialY, size, speed, initialDead, points, imageRes, screamRes)  {
     private var t = Random.nextFloat() * 6.28f
     init {
         val angle = Random.nextDouble() * 2.0 * Math.PI

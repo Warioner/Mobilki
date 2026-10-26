@@ -69,7 +69,7 @@ class Settings : Fragment() {
             if (value == null || value !in 1..999) {
                 bonusTime.error = "От 1 до 999 секунд"
             } else {
-                main.updateSettingsTimeRound(value)
+                main.updateSettingsBonusTime(value)
             }
         }
 
