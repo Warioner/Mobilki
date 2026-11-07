@@ -1,45 +1,54 @@
 package com.example.myapplication.widget
 
+import android.util.Xml
 import okhttp3.ResponseBody
 import org.xmlpull.v1.XmlPullParser
 import retrofit2.Retrofit
 import retrofit2.http.GET
-import java.nio.charset.Charset
+import retrofit2.http.Query
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 
 interface CbrApi {
-    // ВАЖНО: http:// часто обходит блокировку Cloudflare, которая стоит на https:// для этих скриптов
-    @GET("http://www.cbr.ru/scripts/xml_metall.asp")
-    suspend fun getMetalsRates(): retrofit2.Response<ResponseBody>
+    @GET("scripts/xml_metall.asp")
+    suspend fun getMetals(
+        @Query("date_req1") dateFrom: String,
+        @Query("date_req2") dateTo: String
+    ): retrofit2.Response<ResponseBody>
 }
 
 class GoldRateRepository {
-    suspend fun loadRate(): GoldRate? {
+    private val api: CbrApi = Retrofit.Builder()
+        .baseUrl("http://www.cbr.ru/")
+        .build()
+        .create(CbrApi::class.java)
+
+    suspend fun loadRate(): Double {
         return try {
-            val retrofit = Retrofit.Builder()
-                .baseUrl("http://www.cbr.ru/") // Тоже http
-                .build()
-            val api = retrofit.create(CbrApi::class.java)
-            val response = api.getMetalsRates()
+            val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.US)
+            val calendar = Calendar.getInstance()
+
+            val dateTo = dateFormat.format(calendar.time)
+            calendar.add(Calendar.DAY_OF_YEAR, -7) // Берем неделю на случай выходных
+            val dateFrom = dateFormat.format(calendar.time)
+
+            val response = api.getMetals(dateFrom, dateTo)
 
             if (response.isSuccessful && response.body() != null) {
                 val xml = response.body()!!.string()
-                val price = parseGold(xml)
-                if (price != null) {
-                    return GoldRate(price)
-                }
+                parseGold(xml) ?: 0.0
+            } else {
+                0.0
             }
-            null
         } catch (e: Exception) {
-            e.printStackTrace()
-            null
+            0.0
         }
     }
 
     private fun parseGold(xmlData: String): Double? {
-        val parser = org.xmlpull.v1.Xml.newPullParser()
-        // Пробуем UTF-8, так как при http-запросе ЦБ иногда отдает в ней,
-        // а для цифр с запятой это не имеет значения.
-        parser.setInput(xmlData.byteInputStream(Charsets.UTF_8), "UTF-8")
+        val parser = Xml.newPullParser()
+        parser.setInput(xmlData.byteInputStream(java.nio.charset.Charset.forName("windows-1251")), "windows-1251")
 
         var eventType = parser.eventType
         var isGold = false

@@ -1,23 +1,8 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="100dp"
-    android:layout_height="100dp"
-    android:background="@drawable/anton"
-    android:gravity="center"
-    android:orientation="vertical">
-
-    <TextView
-        android:id="@+id/tv_gold_rate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Загрузка..."
-        android:textColor="#000000"
-        android:textStyle="bold"
-        android:textSize="14sp" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Золото ЦБ"
-        android:textColor="#000000"
-        android:textSize="10sp" />
-</LinearLayout>
+<?xml version="1.0" encoding="utf-8"?>
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    android:minWidth="100dp"
+    android:minHeight="100dp"
+    android:updatePeriodMillis="1800000"
+    android:initialLayout="@layout/new_app_widget"
+    android:resizeMode="none"
+    android:widgetCategory="home_screen" />
