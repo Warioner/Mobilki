@@ -18,6 +18,7 @@ import androidx.lifecycle.lifecycleScope
 import com.example.myapplication.classes.DataBase
 import com.example.myapplication.classes.RecordDB
 import com.example.myapplication.classes.User
+import com.example.myapplication.widget.GoldRateRepository
 import kotlinx.coroutines.launch
 
 class Game : Fragment() {
@@ -38,6 +39,7 @@ class Game : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
 
         gameBoard = view.findViewById(R.id.gameBoard)
         timeTextView = view.findViewById(R.id.timeTextView)

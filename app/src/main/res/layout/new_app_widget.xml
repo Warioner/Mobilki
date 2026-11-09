@@ -3,7 +3,7 @@
     android:id="@+id/widgetRoot"
     android:layout_width="100dp"
     android:layout_height="100dp"
-    android:background="@drawable/anton"
+    android:background="@drawable/shar"
     android:gravity="center"
     android:orientation="vertical">
 

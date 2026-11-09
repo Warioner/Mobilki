@@ -30,7 +30,7 @@ class GoldRateRepository {
             val calendar = Calendar.getInstance()
 
             val dateTo = dateFormat.format(calendar.time)
-            calendar.add(Calendar.DAY_OF_YEAR, -7) // Берем неделю на случай выходных
+            calendar.add(Calendar.DAY_OF_YEAR, -7)
             val dateFrom = dateFormat.format(calendar.time)
 
             val response = api.getMetals(dateFrom, dateTo)
